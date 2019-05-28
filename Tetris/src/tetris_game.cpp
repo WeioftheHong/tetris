@@ -230,47 +230,6 @@ int Tetris_Game::is_valid_tetrimino(Tetrimino& t) {
 // creates a new tetrimino to test the new state produced from taking an action
 int Tetris_Game::is_valid_move(Tetrimino& t, int action) {
 	Tetrimino test_tetrimino{ t };
-
-	// TODO: remove switch case to allow for modifiable control schemes
-	/*
-	switch (action)
-	{
-	case GLFW_KEY_RIGHT:
-		test_tetrimino.move_horizontally(1);
-		break;
-	case GLFW_KEY_LEFT:
-		test_tetrimino.move_horizontally(-1);
-		break;
-	case GLFW_KEY_UP:
-		// hard drop always valid / true
-		return VALID_MOVE;
-		break;
-	case GLFW_KEY_DOWN:
-		test_tetrimino.move_vertically(-1);
-		break;
-	case GLFW_KEY_C:
-		// hold tetrimino as long as haven't recently held
-		if (tetrimino_holder.has_recently_held()) {
-			return INVALID_MOVE_HOLD;
-		}
-		else
-		{
-			return VALID_MOVE;
-		}
-		break;
-	case GLFW_KEY_X:
-		// clockwise
-		test_tetrimino.rotate(1);
-		break;
-	case GLFW_KEY_Z:
-		// counter-clockwise
-		test_tetrimino.rotate(-1);
-		break;
-	default:
-		break;
-	}
-	*/
-
 	if (action == button_right_shift) {
 		test_tetrimino.translate(1, 0);
 	}
@@ -303,84 +262,6 @@ int Tetris_Game::is_valid_move(Tetrimino& t, int action) {
 }
 
 void Tetris_Game::move_tetrimino(Tetrimino& t, int action, bool affect_time) {
-	
-	// TODO: remove switch case to allow for customisable control schemes
-	/*
-	switch (action)
-	{
-	case GLFW_KEY_RIGHT:
-		t.move_horizontally(1);
-		break;
-	case GLFW_KEY_LEFT:
-		t.move_horizontally(-1);
-		break;
-	case GLFW_KEY_UP:
-		t.board_y = get_hard_drop_y(t);
-		t.update_width();
-		t.update_height();
-		// make it instant pass and get to the next piece
-		// i.e. hard drop prevents further moves
-		t.has_landed = true;
-		if (affect_time) {
-			increment_fall_counter();
-			delay_move_counter();
-		}
-		break;
-	case GLFW_KEY_DOWN:
-		t.move_vertically(-1);
-		if (affect_time) {
-			increment_move_counter();
-		}
-		break;
-	case GLFW_KEY_C:
-		// hold current tetrimino
-		// for now just swap the current one into the hold zone
-		if (tetrimino_holder.hold(current_tetrimino) == HOLD_WITH_NO_TETRIMINO) {
-			// if the swapped tetrimino replaces current_tetrimino with an invalid one
-			// then create a new tetrimino from scratch
-			new_current_tetrimino();
-		}
-		else
-		{
-			// reset the tetrimino's positions to the top
-			current_tetrimino.board_x = TETRIMINO_STARTING_X;
-			current_tetrimino.board_y = TETRIMINO_STARTING_Y;
-			current_tetrimino.update_pieces();
-			current_tetrimino.update_width();
-			current_tetrimino.update_height();
-			// make new tetrimino displays for the swapped in piece
-			tetris_scene.new_tetrimino_displays();
-		}
-		tetris_scene.new_hold_tetrimino_display();
-		break;
-	case GLFW_KEY_X:
-		// clockwise
-		t.rotate(1);
-		// if landed then rotations can be used to delay
-		if (affect_time) {
-			if (t.has_landed) {
-				delay_fall_counter();
-			}
-			delay_move_counter();
-		}
-		break;
-	case GLFW_KEY_Z:
-		// counter-clockwise
-		t.rotate(-1);
-		// if landed then rotations can be used to delay
-		if (affect_time) {
-			if (t.has_landed) {
-				delay_fall_counter();
-			}
-			delay_move_counter();
-		}
-		break;
-	default:
-		// do nothing
-		break;
-	}
-	*/
-
 	if (action == button_right_shift) {
 		t.translate(1, 0);
 	}
@@ -403,6 +284,9 @@ void Tetris_Game::move_tetrimino(Tetrimino& t, int action, bool affect_time) {
 		t.translate(0, -1);
 	}
 	else if (action == button_hold_piece) {
+		// note: holding only works with current_tetrimin (for now)
+		// very interconnected, might want to change this later for better encapsulation
+
 		// hold current tetrimino
 		// swap the current tetrimino into the tetrimino holder
 		if (tetrimino_holder.hold(t) == HOLD_WITH_NO_TETRIMINO) {
@@ -629,7 +513,7 @@ void Tetris_Game::rotate_tetrimino(Tetrimino& t, int action)
 		// perform translation / wallkick
 		t.translate(offset.x, offset.y);
 		if (is_valid_tetrimino(t) == VALID_TETRIMINO) {
-			std::cout << "wallkick offset success: " << offset.x << ", " << offset.y << std::endl;
+			// std::cout << "wallkick offset success: " << offset.x << ", " << offset.y << std::endl;
 			break;
 		}
 		else {

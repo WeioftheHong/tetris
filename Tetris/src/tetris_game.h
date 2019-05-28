@@ -102,8 +102,8 @@ private:
 	int button_hard_drop = GLFW_KEY_UP;
 	int button_soft_drop = GLFW_KEY_DOWN;
 	int button_hold_piece = GLFW_KEY_C;
-	int button_rotate_left = GLFW_KEY_X;
-	int button_rotate_right = GLFW_KEY_Z;
+	int button_rotate_left = GLFW_KEY_X; // clockwise
+	int button_rotate_right = GLFW_KEY_Z; // counter_clockwise
 
 	int control_keys[NUM_CONTROL_KEYS] =
 	{
