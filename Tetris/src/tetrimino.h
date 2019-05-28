@@ -19,8 +19,7 @@ public:
 	void update_pieces();
 
 	// translate the piece along the x/y axis
-	void move_horizontally(int x);
-	void move_vertically(int y);
+	void translate(int x, int y);
 
 	// "rotate" the piece
 	void rotate(int direction);
@@ -42,7 +41,6 @@ public:
 	// +y right
 	int pieces[PIECES_MAX_WIDTH][PIECES_MAX_HEIGHT];
 
-private:
 	int rotation = 0;
 
 };

@@ -96,12 +96,10 @@ void Tetrimino::update_pieces() {
 	}
 }
 
-void Tetrimino::move_horizontally(int x) {
+void Tetrimino::translate(int x, int y) {
 	board_x += x;
 	lowest_x += x;
-}
 
-void Tetrimino::move_vertically(int y) {
 	board_y += y;
 	lowest_y += y;
 }

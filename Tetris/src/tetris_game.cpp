@@ -15,6 +15,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "tetrimino_wallkicks.h"
+
 namespace tetris {
 
 Tetris_Game::Tetris_Game(GLFWwindow* _window)
@@ -111,7 +113,7 @@ void Tetris_Game::update_player_move()
 					move_tetrimino(current_tetrimino, action, true);
 					move_counter = 0.0f;
 				}
-				else if (action == GLFW_KEY_DOWN)
+				else if (action == button_soft_drop)
 				{
 					// if want to move down but moving down is invalid
 					// then block has landed so increment fall counter
@@ -131,10 +133,10 @@ void Tetris_Game::update_current_tetrimino_fall()
 		fall_counter = 0.0f;
 		if (!current_tetrimino.has_landed) {
 			// repeat 
-			int is_down_valid = is_valid_move(current_tetrimino, GLFW_KEY_DOWN);
+			int is_down_valid = is_valid_move(current_tetrimino, button_soft_drop);
 			if (is_down_valid == VALID_MOVE)
 			{
-				move_tetrimino(current_tetrimino, GLFW_KEY_DOWN, false);
+				move_tetrimino(current_tetrimino, button_soft_drop, false);
 			}
 			else
 			{
@@ -150,7 +152,7 @@ void Tetris_Game::update_current_tetrimino_fall()
 		{
 			// current tetrimino has landed once before (excl. if it just landed)
 			// i.e. reached a point where it might not be able to continue going down
-			int is_down_valid = is_valid_move(current_tetrimino, GLFW_KEY_DOWN);
+			int is_down_valid = is_valid_move(current_tetrimino, button_soft_drop);
 			if (is_down_valid != VALID_MOVE) {
 
 				std::cout << "Setting board: " << is_down_valid << std::endl;
@@ -228,25 +230,20 @@ int Tetris_Game::is_valid_tetrimino(Tetrimino& t) {
 // creates a new tetrimino to test the new state produced from taking an action
 int Tetris_Game::is_valid_move(Tetrimino& t, int action) {
 	Tetrimino test_tetrimino{ t };
-
-	// TODO: remove switch case to allow for modifiable control schemes
-	switch (action)
-	{
-	case GLFW_KEY_RIGHT:
-		test_tetrimino.move_horizontally(1);
-		break;
-	case GLFW_KEY_LEFT:
-		test_tetrimino.move_horizontally(-1);
-		break;
-	case GLFW_KEY_UP:
-		// hard drop always valid / true
-		return VALID_MOVE;
-		break;
-	case GLFW_KEY_DOWN:
-		test_tetrimino.move_vertically(-1);
-		break;
-	case GLFW_KEY_C:
-		// hold tetrimino as long as haven't recently held
+	if (action == button_right_shift) {
+		test_tetrimino.translate(1, 0);
+	}
+	else if (action == button_left_shift) {
+		test_tetrimino.translate(-1, 0);
+	}
+	else if (action == button_hard_drop) {
+		// always valid if the tetrimino is valid
+	}
+	else if (action == button_soft_drop) {
+		test_tetrimino.translate(0, -1);
+	}
+	else if (action == button_hold_piece) {
+		// hold tetrimino as long as it hasn't been recently held
 		if (tetrimino_holder.has_recently_held()) {
 			return INVALID_MOVE_HOLD;
 		}
@@ -254,35 +251,24 @@ int Tetris_Game::is_valid_move(Tetrimino& t, int action) {
 		{
 			return VALID_MOVE;
 		}
-		break;
-	case GLFW_KEY_X:
-		// clockwise
-		test_tetrimino.rotate(1);
-		break;
-	case GLFW_KEY_Z:
-		// counter-clockwise
-		test_tetrimino.rotate(-1);
-		break;
-	default:
-		break;
+	}
+	else if (action == button_rotate_left || action == button_rotate_right) {
+		rotate_tetrimino(test_tetrimino, action);
 	}
 
-	test_tetrimino.update_height();
-	test_tetrimino.update_width();
-
+	// the move is valid if the tetrimino's end location after the move
+	// places it into a valid location
 	return is_valid_tetrimino(test_tetrimino);
 }
 
 void Tetris_Game::move_tetrimino(Tetrimino& t, int action, bool affect_time) {
-	switch (action)
-	{
-	case GLFW_KEY_RIGHT:
-		t.move_horizontally(1);
-		break;
-	case GLFW_KEY_LEFT:
-		t.move_horizontally(-1);
-		break;
-	case GLFW_KEY_UP:
+	if (action == button_right_shift) {
+		t.translate(1, 0);
+	}
+	else if (action == button_left_shift) {
+		t.translate(-1, 0);
+	}
+	else if (action == button_hard_drop) {
 		t.board_y = get_hard_drop_y(t);
 		t.update_width();
 		t.update_height();
@@ -293,60 +279,45 @@ void Tetris_Game::move_tetrimino(Tetrimino& t, int action, bool affect_time) {
 			increment_fall_counter();
 			delay_move_counter();
 		}
-		break;
-	case GLFW_KEY_DOWN:
-		t.move_vertically(-1);
-		if (affect_time) {
-			increment_move_counter();
-		}
-		break;
-	case GLFW_KEY_C:
+	}
+	else if (action == button_soft_drop) {
+		t.translate(0, -1);
+	}
+	else if (action == button_hold_piece) {
+		// note: holding only works with current_tetrimin (for now)
+		// very interconnected, might want to change this later for better encapsulation
+
 		// hold current tetrimino
-		// for now just swap the current one into the hold zone
-		if (tetrimino_holder.hold(current_tetrimino) == HOLD_WITH_NO_TETRIMINO) {
-			// if the swapped tetrimino replaces current_tetrimino with an invalid one
+		// swap the current tetrimino into the tetrimino holder
+		if (tetrimino_holder.hold(t) == HOLD_WITH_NO_TETRIMINO) {
+			// if the swapped tetrimino replaces the tetrimino with an invalid one
 			// then create a new tetrimino from scratch
 			new_current_tetrimino();
 		}
 		else
 		{
 			// reset the tetrimino's positions to the top
-			current_tetrimino.board_x = TETRIMINO_STARTING_X;
-			current_tetrimino.board_y = TETRIMINO_STARTING_Y;
-			current_tetrimino.update_pieces();
-			current_tetrimino.update_width();
-			current_tetrimino.update_height();
+			t.board_x = TETRIMINO_STARTING_X;
+			t.board_y = TETRIMINO_STARTING_Y;
+			t.update_pieces();
+			t.update_width();
+			t.update_height();
 			// make new tetrimino displays for the swapped in piece
 			tetris_scene.new_tetrimino_displays();
 		}
 		tetris_scene.new_hold_tetrimino_display();
-		break;
-	case GLFW_KEY_X:
-		// clockwise
-		t.rotate(1);
-		// if landed then rotations can be used to delay
-		if (affect_time) {
-			if (t.has_landed) {
-				delay_fall_counter();
-			}
-			delay_move_counter();
-		}
-		break;
-	case GLFW_KEY_Z:
-		// counter-clockwise
-		t.rotate(-1);
-		// if landed then rotations can be used to delay
-		if (affect_time) {
-			if (t.has_landed) {
-				delay_fall_counter();
-			}
-			delay_move_counter();
-		}
-		break;
-	default:
-		// do nothing
-		break;
 	}
+	else if (action == button_rotate_left || action == button_rotate_right) {
+		rotate_tetrimino(t, action);
+		// if landed then rotations can be used to delay
+		if (affect_time) {
+			if (t.has_landed) {
+				delay_fall_counter();
+			}
+			delay_move_counter();
+		}
+	}
+
 }
 
 // set this tetrimino into the board
@@ -479,8 +450,8 @@ int Tetris_Game::get_hard_drop_y(const Tetrimino& t) {
 	Tetrimino test{ t };
 	bool dropped = false;
 	while (!dropped) {
-		if (is_valid_move(test, GLFW_KEY_DOWN) == VALID_MOVE) {
-			move_tetrimino(test, GLFW_KEY_DOWN, false);
+		if (is_valid_move(test, button_soft_drop) == VALID_MOVE) {
+			move_tetrimino(test, button_soft_drop, false);
 		}
 		else
 		{
@@ -497,15 +468,62 @@ void Tetris_Game::set_current_tetrimino_from_bag() {
 }
 
 // check if player has lost
-// i.e. newly spawned tetrimino is unable to move down
+// i.e. newly spawned tetrimino is unable to move down	
 bool Tetris_Game::is_current_tetrimino_stuck() {
 	// if at starting y value then validity of game is ensured by the ability to move down
 	// if unable to move down from the starting position then the game is over
 	if (current_tetrimino.board_y >= BOARD_PLAYABLE_HEIGHT) {
-		return is_valid_move(current_tetrimino, GLFW_KEY_DOWN) != VALID_MOVE;
+		return is_valid_move(current_tetrimino, button_soft_drop) != VALID_MOVE;
 	}
 	// if not piece is not at starting position then should be false
 	return false;
+}
+
+void Tetris_Game::rotate_tetrimino(Tetrimino& t, int action) 
+{
+	int start_rotation = t.rotation;
+	if (action == button_rotate_left) {
+		t.rotate(1);
+	}
+	else if (action == button_rotate_right) {
+		t.rotate(-1);
+	}
+	int end_rotation = t.rotation;
+
+	int max_wallkick_tests = wallkicks_enabled ? NUM_WALLKICK_TESTS : 1;
+
+	for (int i = 0; i < max_wallkick_tests; ++i) {
+		glm::vec2 offset;
+		if (t.type == I_TETRIMINO) {
+			offset = wallkicks::i_tetrimino_offsets[start_rotation][i]
+				   - wallkicks::i_tetrimino_offsets[end_rotation][i];
+		}
+		else if (t.type == O_TETRIMINO) {
+			offset = wallkicks::o_tetrimino_offsets[start_rotation][i]
+			  	   - wallkicks::o_tetrimino_offsets[end_rotation][i];
+		} 
+		else if (t.type == J_TETRIMINO || 
+				 t.type == L_TETRIMINO || 
+				 t.type == S_TETRIMINO || 
+				 t.type == T_TETRIMINO ||
+				 t.type == Z_TETRIMINO) {
+			offset = wallkicks::jlstz_tetrimino_offsets[start_rotation][i]
+				   - wallkicks::jlstz_tetrimino_offsets[end_rotation][i];
+		}
+		// perform translation / wallkick
+		t.translate(offset.x, offset.y);
+		if (is_valid_tetrimino(t) == VALID_TETRIMINO) {
+			// std::cout << "wallkick offset success: " << offset.x << ", " << offset.y << std::endl;
+			break;
+		}
+		else {
+			// reverse the translation
+			t.translate(-offset.x, -offset.y);
+		}
+
+	}
+	// else
+	// did not successfully create a rotated tetrimino in a valid location
 }
 
 } // namespace tetris

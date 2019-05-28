@@ -12,14 +12,6 @@
 #include "tetrimino_bag.h"
 #include "tetris_points.h"
 
-#define CONTROL_RIGHT_SHIFT 0
-#define CONTROL_LEFT_SHIFT 1
-#define CONTROL_HARD_DROP 2
-#define CONTROL_SOFT_DROP 3
-#define CONTROL_HOLD_PIECE 4
-#define CONTROL_ROTATE_LEFT 5
-#define CONTROL_ROTATE_RIGHT 6
-
 namespace tetris {
 
 class Tetris_Game;
@@ -92,6 +84,11 @@ private:
 	// i.e. newly spawned tetrimino is unable to move down
 	bool is_current_tetrimino_stuck();
 
+	// modifies input tetrimino to be rotated in the direction specified by action
+	// performs wallkicks if the wallkicks option is enabled
+	// returns true if the rotation of the given tetrimino satisfies is_valid_tetrimino()
+	// otherwise returns false
+	void rotate_tetrimino(Tetrimino& t, int action);
 
 	GLFWwindow* window;
 
@@ -99,11 +96,22 @@ private:
 	Clock clock;
 	Controls controls;
 
+	// maybe put into a controller scheme class?
+	int button_right_shift = GLFW_KEY_RIGHT;
+	int button_left_shift = GLFW_KEY_LEFT;
+	int button_hard_drop = GLFW_KEY_UP;
+	int button_soft_drop = GLFW_KEY_DOWN;
+	int button_hold_piece = GLFW_KEY_C;
+	int button_rotate_left = GLFW_KEY_X; // clockwise
+	int button_rotate_right = GLFW_KEY_Z; // counter_clockwise
+
 	int control_keys[NUM_CONTROL_KEYS] =
 	{
-		GLFW_KEY_RIGHT, GLFW_KEY_LEFT, GLFW_KEY_UP, GLFW_KEY_DOWN,
-		GLFW_KEY_C, GLFW_KEY_X, GLFW_KEY_Z,
+		button_right_shift, button_left_shift, button_hard_drop, button_soft_drop,
+		button_hold_piece, button_rotate_left, button_rotate_right,
 	};
+
+	bool wallkicks_enabled = true;
 
 	bool is_paused = false;
 	bool is_game_over = false;

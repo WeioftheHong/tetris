@@ -45,6 +45,9 @@ namespace tetris {
 #define PIECES_MAX_WIDTH 4
 #define PIECES_MAX_HEIGHT 4
 
+// wallkick constants
+#define NUM_WALLKICK_TESTS 5
+
 #define TETRIMINO_STARTING_X 4
 #define TETRIMINO_STARTING_Y (BOARD_PLAYABLE_HEIGHT + 1)
 
