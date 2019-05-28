@@ -1,6 +1,8 @@
 # tetris
-
 A 3D Tetris game written in C++ rendered using OpenGL 3+ (GLFW and glad)
+
+# Tetris Guidelines
+Follows the tetris guidelines (loosely) at https://tetris.wiki/Tetris_Guideline
 
 ## Credits
 * Largely adapted the OpenGL code provided at https://learnopengl.com/About

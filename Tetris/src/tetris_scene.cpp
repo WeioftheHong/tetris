@@ -105,7 +105,7 @@ Tetris_Scene::Tetris_Scene(GLFWwindow* _window)
 
 	// tetrimino holder light
 	p_lights.emplace_back(
-		ambient, diffuse, specular, glm::vec3(TETRIMINO_HOLD_X, TETRIMINO_HOLD_Y + 2.0f, 4.0f),
+		ambient, diffuse, specular, glm::vec3(TETRIMINO_HOLD_X + 1.0f, TETRIMINO_HOLD_Y + 3.0f, 4.0f),
 		light_intensity, light_constant, light_linear, light_quadratic
 	);
 

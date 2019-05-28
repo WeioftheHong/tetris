@@ -21,9 +21,9 @@
 - fix transparency not working because tetrimino_display and object are 2 different things
 - refactored .h files into .h and .cpp files
 - (hardcoded "ghost" mode using shaders to only reveal objects when shined on by the spotlight i.e. faced by the camera)
+- implement wallkicks/twists with j/l/s/t/z using the same offsets, i blocks using different offsets, and o blocks using no offsets 
 
 ## Incomplete
-- wallkicks -> twists
 - points for t-spins and other weird/extra behaviour
 - speedup if held down button DAS (delayed auto shift)
 - animations for clearing stuff
