@@ -110,6 +110,8 @@ void Tetris_Game::update_player_move()
 			auto action = control_keys[i];
 			if (controls.keys[action]) {
 				if (is_valid_move(current_tetrimino, action) == VALID_MOVE) {
+					previous_move = action;
+					previous_move_used_wallkick = false;
 					move_tetrimino(current_tetrimino, action, true);
 					move_counter = 0.0f;
 				}
@@ -168,7 +170,8 @@ void Tetris_Game::update_current_tetrimino_fall()
 				set_board(current_tetrimino);
 
 				// check for a line clear for every row on the board
-				clear_board();
+				// that could result from the current tetrimino
+				clear_board(current_tetrimino);
 
 				// spawn new tetrimino at the top
 				// randomise type / layout, follow tetrimino next in line from the bag
@@ -391,8 +394,60 @@ void Tetris_Game::increment_fall_counter() {
 }
 
 // check every row on the board and see if it can be cleared
-void Tetris_Game::clear_board() {
+void Tetris_Game::clear_board(const Tetrimino& t) {
 	int num_line_clears = 0;
+
+	/*
+	line clear is a t spin if:
+		clearing tetrimino is a T tetrimino
+		last successful movement was a rotation
+		3/4 squares diagonally adjacent to the T's center are occupied
+	*/
+	int t_spin = T_SPIN_NONE;
+	if (t_spin_enabled && t.type == T_TETRIMINO && 
+	   (previous_move == button_rotate_left || previous_move == button_rotate_right)) {
+		// coordinates of where the T tetriminos corners are
+		glm::vec2 t_spin_corners[4] =
+		{
+			glm::vec2(0, 0),
+			glm::vec2(0, 2),
+			glm::vec2(2, 0),
+			glm::vec2(2, 2),
+		};
+		
+		int occupied_corners = 0;
+		for (int i = 0; i < 4; ++i) {
+			int x = t.board_x + t_spin_corners[i].x;
+			int y = t.board_y + t_spin_corners[i].y;
+			// if the x,y of this corner is out of bounds
+			// then it's the same as if it was occupied by a tetrimino/block
+			if (x < 0 || x >= BOARD_MAX_WIDTH ||
+				y < BOARD_FLOOR_HEIGHT || y >= BOARD_MAX_HEIGHT) {
+				++occupied_corners;
+				continue;
+			}
+
+			// if the corner is filled then it is an occupied corner
+			if (board[x][y] == BOARD_SLOT_FILLED) {
+				++occupied_corners;
+			}
+		}
+		
+		// at least 3 corners are occupied
+		// then any line clears should be awarded points as per t-spin rules
+		if (occupied_corners >= 3) {
+			if (previous_move_used_wallkick) {
+				t_spin = T_SPIN_MINI;
+			}
+			else {
+				t_spin = T_SPIN_FULL;
+			}
+		}
+		
+		std::cout << "===T-spin checker===" << std::endl;
+		std::cout << "origin: " << t.board_x << " , " << t.board_y << std::endl;
+		std::cout << "occupied corners: " << occupied_corners << std::endl;
+	}
 
 	for (auto y = BOARD_FLOOR_HEIGHT; y < BOARD_MAX_HEIGHT - 1; ++y) {
 		// check that this row is actually full
@@ -422,12 +477,14 @@ void Tetris_Game::clear_board() {
 
 	// naive reward system based on num liens cleared
 	// unimplemented t-spins or combos
-	tetris_points.add_points_per_line(num_line_clears);
+	tetris_points.add_points_per_line(num_line_clears, t_spin);
 
 	// combo increases for each consecutive line clear
 	if (num_line_clears > 0) {
 		tetris_points.increment_combo();
 	}
+
+	std::cout << "t-spin value: " << t_spin << " with num line clears: " << num_line_clears << std::endl;
 
 	std::cout << tetris_points.get_points() << std::endl;
 }
@@ -513,6 +570,11 @@ void Tetris_Game::rotate_tetrimino(Tetrimino& t, int action)
 		// perform translation / wallkick
 		t.translate(offset.x, offset.y);
 		if (is_valid_tetrimino(t) == VALID_TETRIMINO) {
+			if (i > 0) {
+				// using a non 0,0 offset implies the move
+				// must have used a wallkick to translate the piece
+				previous_move_used_wallkick = true;
+			}
 			// std::cout << "wallkick offset success: " << offset.x << ", " << offset.y << std::endl;
 			break;
 		}

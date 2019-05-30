@@ -68,7 +68,7 @@ private:
 
 	// check every row on the board and see if it can be cleared
 	// then calls for a line clear for that row wich readjusts the board
-	void clear_board();
+	void clear_board(const Tetrimino& t);
 
 	// clears the row at the given index and adjusts every row above down a row
 	void line_clear(int row);
@@ -112,6 +112,11 @@ private:
 	};
 
 	bool wallkicks_enabled = true;
+	bool t_spin_enabled = true;
+
+	// used for determing if t spin is a t spin mini or a full t spin
+	int previous_move = button_soft_drop;
+	bool previous_move_used_wallkick = false;
 
 	bool is_paused = false;
 	bool is_game_over = false;
