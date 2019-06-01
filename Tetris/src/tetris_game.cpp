@@ -470,19 +470,8 @@ void Tetris_Game::clear_board(const Tetrimino& t) {
 		// else ignore
 	}
 
-	// remove previous combo if no lines cleared
-	if (num_line_clears == 0) {
-		tetris_points.reset_combo();
-	}
-
-	// naive reward system based on num liens cleared
-	// unimplemented t-spins or combos
+	// reward points based on line clears and t_spin propreties
 	tetris_points.add_points_per_line(num_line_clears, t_spin);
-
-	// combo increases for each consecutive line clear
-	if (num_line_clears > 0) {
-		tetris_points.increment_combo();
-	}
 
 	std::cout << "t-spin value: " << t_spin << " with num line clears: " << num_line_clears << std::endl;
 
