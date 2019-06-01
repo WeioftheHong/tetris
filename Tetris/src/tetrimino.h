@@ -26,9 +26,13 @@ public:
 
 	int type;
 
+	// the x,y coordinates of this tetrimino
+	// with the centre at the bottom-left corner
 	int board_x;
 	int board_y;
 
+	// the least x-coordinate of this tetrimino 
+	// that is non-empty and actually has a piece in it 
 	int lowest_x;
 	int lowest_y;
 

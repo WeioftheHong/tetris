@@ -22,9 +22,11 @@
 - refactored .h files into .h and .cpp files
 - (hardcoded "ghost" mode using shaders to only reveal objects when shined on by the spotlight i.e. faced by the camera)
 - implement wallkicks/twists with j/l/s/t/z using the same offsets, i blocks using different offsets, and o blocks using no offsets 
+- points for t-spins and t-spin mini (incl. double and triple variants)
 
 ## Incomplete
-- points for t-spins and other weird/extra behaviour
+- proper combo incrementing
+- proper back-to-back bonus points
 - speedup if held down button DAS (delayed auto shift)
 - animations for clearing stuff
 - slowly move tetriminoes in directions / animations?

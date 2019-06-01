@@ -59,13 +59,28 @@ namespace tetris {
 #define TETRIMINO_BAG_Y TETRIMINO_HOLD_Y
 #define TETRIMINO_BAG_Y_DIFF -5
 
-	// basic points
+// limits for points
+#define MAX_LINE_CLEARS 4
+#define MAX_T_SPIN_TYPES 3
+
+// t-spin determiners
+#define T_SPIN_NONE 0
+#define T_SPIN_MINI 1
+#define T_SPIN_FULL 2
+
+// basic points
+#define POINTS_NONE 0
 #define POINTS_SINGLE 100
 #define POINTS_DOUBLE 300
 #define POINTS_TRIPLE 500
 #define POINTS_TETRIS 800
 
-// weird advanced points stuff, unimplemented
+// t-spin mini points
+#define POINTS_T_SPIN_MINI 100
+#define POINTS_T_SPIN_MINI_SINGLE 200
+#define POINTS_T_SPIN_MINI_DOUBLE 1200
+
+// proper t-spin points
 #define POINTS_T_SPIN 400
 #define POINTS_T_SPIN_SINGLE 800
 #define POINTS_T_SPIN_DOUBLE 1200
