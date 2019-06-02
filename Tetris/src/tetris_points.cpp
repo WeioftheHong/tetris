@@ -5,6 +5,8 @@
 
 #include <algorithm>
 
+#include <iostream>
+
 namespace tetris {
 
 const int Tetris_Points::points_table[MAX_T_SPIN_TYPES][MAX_LINE_CLEARS+1] = 
@@ -28,11 +30,9 @@ void Tetris_Points::add_points_per_line(int lines, int t_spin) {
 	}
 
 	// if a line clear happens that is not difficult 
-	// (i.e. not tetris or t-spin)
+	// (i.e. not tetris or t-spin) -> (clear 1-3 lines and not t-spin)
 	// then reset the back to back bonus
-	if (lines > 0 &&
-	   (lines != MAX_LINE_CLEARS || 
-		t_spin == T_SPIN_NONE)) {
+	if (lines > 0 && lines < MAX_LINE_CLEARS && t_spin == T_SPIN_NONE) {
 		reset_back_to_back_bonus();
 	}
 
@@ -41,7 +41,7 @@ void Tetris_Points::add_points_per_line(int lines, int t_spin) {
 
 	// check and multiply with back_to_back_bonus
 	if (back_to_back_bonus != 0) {
-		tmp_points *= POINTS_BACK_TO_BACK_BONUS;
+		tmp_points = tmp_points * POINTS_BACK_TO_BACK_BONUS;
 	}
 	points += tmp_points;
 
@@ -57,7 +57,7 @@ void Tetris_Points::add_points_per_line(int lines, int t_spin) {
 
 	// back to back increase for non-difficult line clears
 	if (lines >= MAX_LINE_CLEARS ||
-		(lines > 0 && t_spin != T_SPIN_NONE)) {
+	   (lines > 0 && t_spin != T_SPIN_NONE)) {
 		increment_back_to_back_bonus();
 	}
 

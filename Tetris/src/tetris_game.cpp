@@ -479,8 +479,9 @@ void Tetris_Game::clear_board(const Tetrimino& t) {
 }
 
 void Tetris_Game::line_clear(int row) {
+	// TODO: fix doesn't drag from ceiling properl
 	// move everything above the cleared row down 1
-	for (auto y = row; y < BOARD_PLAYABLE_HEIGHT; ++y) {
+	for (auto y = row; y <= TETRIMINO_STARTING_Y + PIECES_MAX_HEIGHT; ++y) {
 		for (auto x = 0; x < BOARD_PLAYABLE_WIDTH; ++x) {
 			if (x < 0 || x >= BOARD_MAX_WIDTH ||
 				y < BOARD_FLOOR_HEIGHT || y >= BOARD_MAX_HEIGHT - 1) continue;

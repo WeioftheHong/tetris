@@ -25,6 +25,7 @@
 - points for t-spins and t-spin mini (incl. double and triple variants)
 - proper combo incrementing
 - proper back-to-back bonus points
+- fix bug where placing a tetrimino that overlaps with the ceiling of the game board will cause a non-removal tetrimino forever in that column
 
 ## Incomplete
 - speedup if held down button DAS (delayed auto shift)
