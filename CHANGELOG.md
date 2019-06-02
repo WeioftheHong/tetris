@@ -23,10 +23,11 @@
 - (hardcoded "ghost" mode using shaders to only reveal objects when shined on by the spotlight i.e. faced by the camera)
 - implement wallkicks/twists with j/l/s/t/z using the same offsets, i blocks using different offsets, and o blocks using no offsets 
 - points for t-spins and t-spin mini (incl. double and triple variants)
-
-## Incomplete
 - proper combo incrementing
 - proper back-to-back bonus points
+- fix bug where placing a tetrimino that overlaps with the ceiling of the game board will cause a non-removal tetrimino forever in that column
+
+## Incomplete
 - speedup if held down button DAS (delayed auto shift)
 - animations for clearing stuff
 - slowly move tetriminoes in directions / animations?

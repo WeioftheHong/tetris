@@ -470,19 +470,8 @@ void Tetris_Game::clear_board(const Tetrimino& t) {
 		// else ignore
 	}
 
-	// remove previous combo if no lines cleared
-	if (num_line_clears == 0) {
-		tetris_points.reset_combo();
-	}
-
-	// naive reward system based on num liens cleared
-	// unimplemented t-spins or combos
+	// reward points based on line clears and t_spin propreties
 	tetris_points.add_points_per_line(num_line_clears, t_spin);
-
-	// combo increases for each consecutive line clear
-	if (num_line_clears > 0) {
-		tetris_points.increment_combo();
-	}
 
 	std::cout << "t-spin value: " << t_spin << " with num line clears: " << num_line_clears << std::endl;
 
@@ -490,8 +479,9 @@ void Tetris_Game::clear_board(const Tetrimino& t) {
 }
 
 void Tetris_Game::line_clear(int row) {
+	// TODO: fix doesn't drag from ceiling properl
 	// move everything above the cleared row down 1
-	for (auto y = row; y < BOARD_PLAYABLE_HEIGHT; ++y) {
+	for (auto y = row; y <= TETRIMINO_STARTING_Y + PIECES_MAX_HEIGHT; ++y) {
 		for (auto x = 0; x < BOARD_PLAYABLE_WIDTH; ++x) {
 			if (x < 0 || x >= BOARD_MAX_WIDTH ||
 				y < BOARD_FLOOR_HEIGHT || y >= BOARD_MAX_HEIGHT - 1) continue;

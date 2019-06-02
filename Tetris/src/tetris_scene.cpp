@@ -39,7 +39,7 @@ Tetris_Scene::Tetris_Scene(GLFWwindow* _window)
 	std::vector<glm::vec3> cubePositions;
 	for (auto x = -1; x < BOARD_MAX_WIDTH + 1; ++x)
 	{
-		for (auto y = -1; y < BOARD_PLAYABLE_HEIGHT + 1; ++y)
+		for (auto y = -1; y < BOARD_PLAYABLE_HEIGHT + PIECES_MAX_HEIGHT + 1; ++y)
 		{
 			if ((x == -1) ||
 				(x == BOARD_MAX_WIDTH) ||
@@ -231,10 +231,8 @@ void Tetris_Scene::line_clear(int row)
 
 void Tetris_Scene::line_shift_down(int row) 
 {
-	for (auto y = row; y < BOARD_PLAYABLE_HEIGHT; ++y) {
+	for (auto y = row; y <= TETRIMINO_STARTING_Y + PIECES_MAX_HEIGHT; ++y) {
 		for (auto x = 0; x < BOARD_PLAYABLE_WIDTH; ++x) {
-			// assuming that the row at BOARD_PLAYABLE_HEIGHT is a clear row
-			// and that BOARD_PLAYABLE_HEIGHT is strictly less than BOARD_MAX_HEIGHT
 			// this shouldn't pull unknown values/objects into the board
 			board[x][y] = board[x][y + 1];
 			board[x][y].position -= glm::vec3(0.0f, 1.0f, 0.0f);
