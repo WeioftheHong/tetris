@@ -26,6 +26,8 @@
 - proper combo incrementing
 - proper back-to-back bonus points
 - fix bug where placing a tetrimino that overlaps with the ceiling of the game board will cause a non-removal tetrimino forever in that column
+- added light_mode uniform to the fragment shader to support switching between ghost/spotlight shader and standard shader without having to recompile
+- smoothed out the transparency of objects drawn by the fragment shader and also modified the spotlights intensity and attenuation to fit better
 
 ## Incomplete
 - speedup if held down button DAS (delayed auto shift)

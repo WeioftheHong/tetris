@@ -11,23 +11,6 @@
 
 namespace tetris {
 
-// redo constructor
-/*
-Object(const std::vector<float> _vertex_data = std::vector<float>{0.0f, 0.0f, 0.0f},
-		const glm::vec3 _position = glm::vec3(0.0f, 0.0f, 0.0f),
-		const float _rotation_degree = 0.0f,
-		const glm::vec3 _rotation_axis = glm::vec3(0, 0, 1.0f),
-		const glm::vec3 _scale = glm::vec3(1.0f, 1.0f, 1.0f))
-		:
-		vertex_data{ _vertex_data },
-		position{ _position },
-		rotation_degree{ _rotation_degree },
-		rotation_axis{ _rotation_axis },
-		scale{ _scale }
-{
-
-};
-*/
 Object::Object() {};
 
 // constructor
@@ -37,7 +20,8 @@ Object::Object(GLuint _first_vertex_index, GLuint _num_vertices,
 			   bool _is_visible,
 			   GLuint _VAO, GLuint _VBO,
 			   float _shininess,
-			   float _transparency)
+			   float _transparency,
+			   int _light_mode)
 	:
 	first_vertex_index{ _first_vertex_index }, num_vertices{ _num_vertices },
 	position{ _position },
@@ -45,7 +29,8 @@ Object::Object(GLuint _first_vertex_index, GLuint _num_vertices,
 	is_visible{ _is_visible },
 	VAO{ _VAO }, VBO{ _VBO },
 	shininess{ _shininess },
-	transparency{ _transparency }
+	transparency{ _transparency },
+	light_mode{ _light_mode }
 {
 
 };
@@ -57,7 +42,8 @@ Object::Object(const Object& o)
 			 o.rotation_angle, o.rotation_axis, o.scale, o.is_visible,
 		 	 o.VAO, o.VBO,
 			 o.shininess,
-			 o.transparency)
+			 o.transparency,
+			 o.light_mode)
 {
 	for (auto& v : o.vertex_data) {
 		vertex_data.push_back(v);
@@ -117,6 +103,7 @@ void swap(Object& lhs, Object& rhs) {
 	std::swap(lhs.textures, rhs.textures);
 	std::swap(lhs.shininess, rhs.shininess);
 	std::swap(lhs.transparency, rhs.transparency);
+	std::swap(lhs.light_mode, rhs.light_mode);
 	std::swap(lhs.children, rhs.children);
 }
 

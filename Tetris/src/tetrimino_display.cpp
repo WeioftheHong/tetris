@@ -5,8 +5,8 @@
 
 namespace tetris {
 
-Tetrimino_Display::Tetrimino_Display(int x, int y, float _transparency)
-	: board_x{ x }, board_y{ y }, transparency{ _transparency }
+Tetrimino_Display::Tetrimino_Display(int x, int y, float _transparency, int _light_mode)
+	: board_x{ x }, board_y{ y }, transparency{ _transparency }, light_mode{ _light_mode }
 {
 	
 };
@@ -27,7 +27,7 @@ void Tetrimino_Display::setup(const Tetrimino& t)
 		{
 			this->pieces[i][j] = t.pieces[i][j];
 			glm::vec3 position(this->board_x + 1.0f * i, this->board_y + 1.0f * j, 0.0f);
-			setup_tetrimino_object(objects[i][j], position, t.type, transparency);
+			setup_tetrimino_object(objects[i][j], position, t.type, transparency, light_mode);
 
 			if (this->pieces[i][j] == BOARD_SLOT_EMPTY)
 			{
@@ -82,7 +82,10 @@ void Tetrimino_Display::update_object_positions(int x, int y) {
 	}
 }
 
-void Tetrimino_Display::setup_tetrimino_object(Object& cube, glm::vec3 position, int tetrimino_type, float transparency) {
+void Tetrimino_Display::setup_tetrimino_object(Object& cube, glm::vec3 position, 
+											   int tetrimino_type, 
+											   float transparency, 
+											   int light_mode) {
 	for (auto v : cube_vertices) {
 		cube.vertex_data.push_back(v);
 	}
@@ -95,8 +98,9 @@ void Tetrimino_Display::setup_tetrimino_object(Object& cube, glm::vec3 position,
 	cube.enable_attribute(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
 	cube.add_texture(texture_names[tetrimino_type]);
 	cube.add_texture(specular_texture_names[tetrimino_type]);
-	cube.shininess = 64.0f;
+	cube.shininess = 32.0f;
 	cube.transparency = transparency;
+	cube.light_mode = light_mode;
 }
 
 const float Tetrimino_Display::cube_vertices[288] = {

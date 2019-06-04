@@ -5,8 +5,8 @@
 
 namespace tetris {
 
-Tetris_Scene::Tetris_Scene(GLFWwindow* _window)
-	: Scene{ _window }, window{ _window }
+Tetris_Scene::Tetris_Scene(GLFWwindow* _window, int _game_mode)
+	: Scene{ _window }, window{ _window }, game_mode{ _game_mode }
 {
 	// init relevant gl rendering options
 	// Enable depth test
@@ -22,7 +22,7 @@ Tetris_Scene::Tetris_Scene(GLFWwindow* _window)
 
 	Scene::background = glm::vec4(0.25f, 0.35f, 0.45f, 1.0f);
 	// Scene::camera = Camera(_window, glm::vec3(5.0f, 5.0f, 5.0f));
-	Scene::camera.set_position(glm::vec3(5.0f, 11.0f, 20.0f));
+	Scene::camera.set_position(glm::vec3(5.0f, 11.0f, 15.0f));
 
 	// build and compile our shader program
 	// ------------------------------------
@@ -125,8 +125,8 @@ Tetris_Scene::Tetris_Scene(GLFWwindow* _window)
 	// ghost spotlight
 	s_lights.emplace_back(
 		ambient, diffuse, specular, camera.position,
-		8.0f, 0.5f, light_linear, light_quadratic,
-		camera.direction, glm::cos(glm::radians(10.0f)), glm::cos(glm::radians(18.0f))
+		10.0f, 0.3f, 0.05f, 0.023,
+		camera.direction, glm::cos(glm::radians(10.0f)), glm::cos(glm::radians(20.0f))
 	);
 
 	for (auto& e : s_lights) {
@@ -140,11 +140,12 @@ Tetris_Scene::Tetris_Scene(GLFWwindow* _window)
 		}
 	}
 
-	ghost_tetrimino_display.transparency = 0.5f;
-
 	for (auto i = 0; i < TETRIMINO_BAG_DISPLAY_SIZE; ++i) {
-		tetrimino_bag_display.emplace_back();
+		tetrimino_bag_display.emplace_back(0, 0, 1.0f, game_mode);
 	}
+
+	new_tetrimino_displays();
+	ghost_tetrimino_display.transparency = 0.5f;
 
 };
 
@@ -243,14 +244,12 @@ void Tetris_Scene::line_shift_down(int row)
 // whenever a new tetrimino is spawned in, create new displays to show
 void Tetris_Scene::new_tetrimino_displays() 
 {
-	current_tetrimino_display = Tetrimino_Display(255, 255, 1.0f);
+	current_tetrimino_display = Tetrimino_Display(255, 255, 1.0f, game_mode);
 
 	// remove ghost objects
 	remove_display_objects(ghost_tetrimino_display);
 	// force new ghost tetrimino display (updates the textures) to match new piece
-	ghost_tetrimino_display = Tetrimino_Display(255, 255, 0.5f);
-
-	std::cout << "ghost has transparency: " << ghost_tetrimino_display.transparency << std::endl;
+	ghost_tetrimino_display = Tetrimino_Display(255, 255, 0.5f, game_mode);
 
 	// remove tetrimino bag displays
 	// try copy/salvage some of the bag by swapping upwards
@@ -259,14 +258,14 @@ void Tetris_Scene::new_tetrimino_displays()
 	// full replace
 	for (auto i = 0; i < TETRIMINO_BAG_DISPLAY_SIZE; ++i) {
 		remove_display_objects(tetrimino_bag_display[i]);
-		tetrimino_bag_display[i] = Tetrimino_Display();
+		tetrimino_bag_display[i] = Tetrimino_Display(255, 255, 1.0f, game_mode);
 	}
 }
 
 void Tetris_Scene::new_hold_tetrimino_display() 
 {
 	remove_display_objects(hold_tetrimino_display);
-	hold_tetrimino_display = Tetrimino_Display();
+	hold_tetrimino_display = Tetrimino_Display(255, 255, 1.0f, game_mode);
 }
 
 } // namespace tetris

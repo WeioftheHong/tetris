@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
 	}
 	
 	// Test_Scene test{ window };
-	tetris::Tetris_Game tetris_game{ window };
+	tetris::Tetris_Game tetris_game{ window , 1};
 
 	// rendering loop	
 	while (!glfwWindowShouldClose(window))

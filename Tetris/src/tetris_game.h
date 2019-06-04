@@ -17,7 +17,7 @@ namespace tetris {
 class Tetris_Game;
 class Tetris_Game {
 public:
-	Tetris_Game(GLFWwindow* _window);
+	Tetris_Game(GLFWwindow* _window, int _game_mode = GAME_MODE_NORMAL);
 
 	// updates the game state
 	// makes sure to update the clock every frame since some functions 
@@ -95,7 +95,7 @@ private:
 	Tetris_Scene tetris_scene;
 	Clock clock;
 	Controls controls;
-
+	
 	// maybe put into a controller scheme class?
 	int button_right_shift = GLFW_KEY_RIGHT;
 	int button_left_shift = GLFW_KEY_LEFT;
@@ -110,6 +110,8 @@ private:
 		button_right_shift, button_left_shift, button_hard_drop, button_soft_drop,
 		button_hold_piece, button_rotate_left, button_rotate_right,
 	};
+
+	int game_mode;
 
 	bool wallkicks_enabled = true;
 	bool t_spin_enabled = true;

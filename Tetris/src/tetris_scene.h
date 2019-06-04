@@ -17,7 +17,7 @@ class Tetris_Scene;
 class Tetris_Scene : public Scene {
 public:
 
-	Tetris_Scene(GLFWwindow* _window);
+	Tetris_Scene(GLFWwindow* _window, int _game_mode);
 
 	template <size_t rows, size_t cols>
 	void update(const double delta_time,
@@ -109,6 +109,8 @@ public:
 	Object board[BOARD_MAX_WIDTH][BOARD_MAX_HEIGHT];
 
 	std::vector<Object> boundary;
+
+	int game_mode;
 
 	std::vector<Directional_Light> d_lights;
 	std::vector<Point_Light> p_lights;

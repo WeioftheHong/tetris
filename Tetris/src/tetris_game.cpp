@@ -19,8 +19,8 @@
 
 namespace tetris {
 
-Tetris_Game::Tetris_Game(GLFWwindow* _window)
-	: window{ _window }, tetris_scene{ _window }, controls{ _window }
+Tetris_Game::Tetris_Game(GLFWwindow* _window, int _game_mode)
+	: window{ _window }, tetris_scene{ _window, _game_mode }, controls{ _window }, game_mode{ _game_mode }
 {
 	for (auto i = 0; i < BOARD_MAX_WIDTH; ++i) {
 		for (auto j = BOARD_FLOOR_HEIGHT; j < BOARD_MAX_HEIGHT; ++j) {

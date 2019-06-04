@@ -72,6 +72,7 @@ void Shader_Manager::draw(glm::mat4& projection, glm::mat4& view, glm::vec3& vie
 		if (e->is_visible) {
 			shader.set("shininess", e->shininess);
 			shader.set("transparency", e->transparency);
+			shader.set("light_mode", e->light_mode);
 
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, e->position);

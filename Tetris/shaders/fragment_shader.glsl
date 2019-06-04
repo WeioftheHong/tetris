@@ -63,6 +63,7 @@ uniform sampler2D textures[MAX_TEXTURES];
 
 uniform float shininess;
 uniform float transparency;
+uniform int light_mode;
 
 vec3 calculate_directional_light(Directional_Light light, vec3 norm, vec3 view_direction);
 vec3 calculate_point_light(Point_Light light, vec3 normal, vec3 view_direction, vec3 fragment_position);
@@ -97,11 +98,13 @@ void main()
 
 	result += spot_light_color;
 
-	// standard frag color
-	FragColor = vec4(result, clamp(transparency, 0.0, 1.0));
-	
-	// ghost shader
-	// FragColor = vec4(result, clamp((spot_light_color.x + spot_light_color.y + spot_light_color.z) / 4 - (1.0 - transparency) / 2, 0.0, 1.0));
+	if (light_mode == 0) {
+		// standard frag color
+		FragColor = vec4(result, clamp(transparency, 0.0, 1.0));
+	} else {
+		// ghost shader
+		FragColor = vec4(result, clamp((spot_light_color.x + spot_light_color.y + spot_light_color.z) * 35 / 120 - (1.0 - transparency) / 3 - 0.1, 0.0, 1.0));
+	}
 }
 
 

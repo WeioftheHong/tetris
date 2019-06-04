@@ -23,7 +23,8 @@ public:
 		   bool _is_visible,
 		   GLuint _VAO, GLuint _VBO,
 		   float _shininess,
-		   float _transparency);
+		   float _transparency,
+		   int _light_mode);
 	// copy constructor
 	Object(const Object& o);
 	// move constructor
@@ -74,6 +75,10 @@ public:
 	// still requires objects to be drawn background to foreground
 	// i.e. ordering of objects in shader is not automatic
 	float transparency = 1.0f;
+
+	// 0 for normal shader usage
+	// 1 for ghost shader usage, only reveals objects if they are within range of a spotlight
+	int light_mode = 0;
 
 	std::vector<Object> children;
 

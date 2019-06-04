@@ -13,7 +13,9 @@ namespace tetris {
 // internal piece poisitions (rotations)
 class Tetrimino_Display {
 public:
-	Tetrimino_Display(int x = 255, int y = 255, float _transparency = 1.0f);
+	Tetrimino_Display(int x = 255, int y = 255, 
+					  float _transparency = 1.0f, 
+					  int light_mode = 0);
 
 	bool is_empty();
 
@@ -27,6 +29,9 @@ public:
 	int board_y;
 
 	float transparency;
+	// 0 == normal
+	// 1 == ghost mode i.e. transparency tetriminos
+	int light_mode;
 
 	int pieces[PIECES_MAX_WIDTH][PIECES_MAX_HEIGHT] =
 	{
@@ -44,7 +49,10 @@ public:
 	// and this entire class is about drawing said tetrimino
 	// hence, this class should be responsible for knowing how to put a tetrimino together
 	// from a collection of objects and load the appropriate display (textures)
-	static void setup_tetrimino_object(Object& cube, glm::vec3 position, int tetrimino_type, float transparency);
+	static void setup_tetrimino_object(Object& cube, glm::vec3 position, 
+									   int tetrimino_type, 
+									   float transparency,
+									   int light_mode);
 
 private: 
 	// texture and specular texture names
